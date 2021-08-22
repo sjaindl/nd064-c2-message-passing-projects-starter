@@ -1,0 +1,23 @@
+The recommendation is to split the monolithic app into 3 modules:
+
+1. Persons module
+The persons module includes the endpoints and service to get and post Persons. This is the service with the least used data.
+As the business requirement is to save costs and there already exist REST endpoints for:
+/persons GET
+/persons POST
+/persons/{person_id} GET
+these endpoints should stay REST endpoints, but be separate in their own microservice.
+
+2. Connections module
+Technically part of the persons endpoints, this single request is much more computational intensive as well as much more requests are expected to happen.
+This is because much location data needs to be processed to get the nearest persons for a given query (person, date, proximity).
+The design is to use REST, to stay consistent with the persons API, but to use a KAFKA queue in addition.
+With the KAFKA queue the risk of to many/computational request on this endpoint should be avoided. 
+Requests are processed in order with the available computational power.
+It includes the endpoint:
+/persons/{person_id}/connections GET
+
+3. Locations module
+This is the module where the most heavy traffic is expected and includes all endpoints on the /api/locations path.
+As the absolute need here is to strive for performance and scalability the choice is to use gRPC (sacrificing flexibility of REST).
+In addition, a KAFKA queue is used to provide even better scalability, too.
