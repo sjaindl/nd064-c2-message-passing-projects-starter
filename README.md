@@ -150,3 +150,28 @@ Your architecture diagram should focus on the services and how they talk to one 
 ## Tips
 * We can access a running Docker container using `kubectl exec -it <pod_id> sh`. From there, we can `curl` an endpoint to debug network issues.
 * The starter project uses Python Flask. Flask doesn't work well with `asyncio` out-of-the-box. Consider using `multiprocessing` to create threads for asynchronous behavior in a standard Flask application.
+
+## Docker Deployment
+docker build -t udaconnect-app .
+docker build -t udaconnect-persons-api .
+docker build -t udaconnect-connections-api .
+docker build -t udaconnect-locations-api .
+
+docker images
+docker run -it -d -p 3000:3000 udaconnect-app
+
+docker run -it -d -p 30002:5002 udaconnect-persons-api
+docker run -it -d -p 30003:5003 udaconnect-connections-api
+docker run -it -d -p 30004:5004 udaconnect-locations-api
+docker ps
+docker logs 5eca0e
+
+docker tag udaconnect-app stefanjaindl/udaconnect-app:v.1.0.0
+docker tag udaconnect-app stefanjaindl/udaconnect-persons-api:v.1.0.0
+docker tag udaconnect-app stefanjaindl/udaconnect-connections-api:v.1.0.0
+docker tag udaconnect-app stefanjaindl/udaconnect-locations-api:v.1.0.0
+
+docker push stefanjaindl/udaconnect-app:v.1.0.0
+docker push stefanjaindl/udaconnect-persons-api:v.1.0.0
+docker push stefanjaindl/udaconnect-connections-api:v.1.0.0
+docker push stefanjaindl/udaconnect-locations-api:v.1.0.0
