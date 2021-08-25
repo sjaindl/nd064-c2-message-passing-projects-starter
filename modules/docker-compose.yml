@@ -57,17 +57,6 @@ services:
       - connections_api
       - locations_api
 
-  api:
-    build: api
-    command: ["flask", "run", "--host=0.0.0.0"]
-    volumes:
-      - ./api:/backend
-    environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app/__init__.py
-    ports:
-      - "30005:5000"
-
 volumes: # named volumes can be managed easier using docker-compose
   node-modules:
   postgres-data: 
