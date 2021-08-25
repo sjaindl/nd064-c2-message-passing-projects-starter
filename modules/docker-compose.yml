@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  postgres:
+    image: "postgis/postgis:12-2.5-alpine"
+    env_file:
+      - postgres.env # configures postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+
+  persons_api:
+    build: persons_api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./persons_api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app/__init__.py
+    ports:
+      - "30002:5000"
+
+  connections_api:
+    build: connections_api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./connections_api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app/__init__.py
+    ports:
+      - "30003:5000"
+
+  locations_api:
+    build: locations_api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./locations_api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app/__init__.py
+    ports:
+      - "30004:5000"
+
+  frontend:
+    tty: true
+    build: frontend
+    command: ["npm", "start"]
+    volumes:
+      - ./frontend:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - persons_api
+      - connections_api
+      - locations_api
+
+  api:
+    build: api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app/__init__.py
+    ports:
+      - "30005:5000"
+
+volumes: # named volumes can be managed easier using docker-compose
+  node-modules:
+  postgres-data: 
