@@ -175,3 +175,13 @@ docker push stefanjaindl/udaconnect-app:v.1.0.0
 docker push stefanjaindl/udaconnect-persons-api:v.1.0.0
 docker push stefanjaindl/udaconnect-connections-api:v.1.0.0
 docker push stefanjaindl/udaconnect-locations-api:v.1.0.0
+
+## Database setup
+
+Setup of db with Docker Compose as described in:
+https://medium.com/analytics-vidhya/getting-started-with-postgresql-using-docker-compose-34d6b808c47c
+
+docker-compose up
+docker-compose run postgres bash  (in another shell tab)
+psql --host=postgres --username=ct_admin dbname=geoconnections   (enter password d293aW1zb3NlY3VyZQ==)
+Execute create table & insert data scripts from db folder
