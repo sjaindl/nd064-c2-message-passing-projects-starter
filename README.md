@@ -185,3 +185,14 @@ docker-compose up
 docker-compose run postgres bash  (in another shell tab)
 psql --host=postgres --username=ct_admin dbname=geoconnections   (enter password d293aW1zb3NlY3VyZQ==)
 Execute create table & insert data scripts from db folder
+
+## GRPC
+
+Create gRPC files:
+python -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ locations.proto
+
+## Kafka + Zookeeper
+
+https://www.baeldung.com/ops/kafka-docker-setup
+
+https://kafkatool.com/download.html
