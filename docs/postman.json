@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "3ed25df7-c4d7-442d-9356-15918fd11c5c",
+		"name": "Udaconnect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Persons",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:30002/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30002",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Person",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:30002/api/persons/{{person_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30002",
+					"path": [
+						"api",
+						"persons",
+						"{{person_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Persons",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\" : 10,\n    \"first_name\" : {{first_name}},\n    \"last_name\" : {{last_name}},\n    \"company_name\" : {{company_name}}\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:30002/api/persons",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30002",
+					"path": [
+						"api",
+						"persons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Connections",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:30003/api/persons/{{person_id}}/connection?start_date={{start_date}}&end_date={{end_date}}&distance={{distance}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30003",
+					"path": [
+						"api",
+						"persons",
+						"{{person_id}}",
+						"connection"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "{{start_date}}"
+						},
+						{
+							"key": "end_date",
+							"value": "{{end_date}}"
+						},
+						{
+							"key": "distance",
+							"value": "{{distance}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
