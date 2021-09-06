@@ -10,7 +10,6 @@ services:
 
   persons_api:
     build: persons_api
-    command: ["flask", "run", "--host=0.0.0.0"]
     volumes:
       - ./persons_api:/backend
     environment:
@@ -21,7 +20,6 @@ services:
 
   connections_api:
     build: connections_api
-    command: ["flask", "run", "--host=0.0.0.0"]
     volumes:
       - ./connections_api:/backend
     environment:
@@ -30,16 +28,58 @@ services:
     ports:
       - "30003:5000"
 
-  locations_api:
-    build: locations_api
-    command: ["flask", "run", "--host=0.0.0.0"]
+  location_events_api:
+    build: location_events_api
+    depends_on:
+      - kafka, zookeeper
+    #command: ["./wait-for-it.sh", "kafka:9093", "--", "python", "app/grpc_server.py"]
+    command: ["python", "app/grpc_server.py"]
     volumes:
-      - ./locations_api:/backend
-    environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app/__init__.py
+      - ./location_events_api:/backend
     ports:
       - "30004:5000"
+    networks:
+      - app-tier
+
+  location_processor:
+    build: location_processor
+    depends_on:
+      - kafka, zookeeper
+    command: ["python", "location_processor_service.py"]
+    volumes:
+      - ./location_processor:/backend
+    ports:
+      - "30005:5000"
+    networks:
+      - app-tier
+
+  #from: https://github.com/bitnami/bitnami-docker-kafka#how-to-use-this-image
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - app-tier
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9093:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093 #PLAINTEXT://127.0.0.1:9092,
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+    depends_on:
+      - zookeeper
+    networks:
+      - app-tier
 
   frontend:
     tty: true
@@ -60,3 +100,6 @@ services:
 volumes: # named volumes can be managed easier using docker-compose
   node-modules:
   postgres-data: 
+
+networks:
+  app-tier:
